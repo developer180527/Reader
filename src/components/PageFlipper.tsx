@@ -48,19 +48,22 @@ function PortraitFlipper({ currentPage, totalPages, onPageChange, renderPage }: 
     const threshold = width * 0.2;
     const velocity = info.velocity.x;
     
+    // Smooth spring configuration
+    const transition = { type: 'spring', stiffness: 200, damping: 20, mass: 0.8 };
+    
     if (flippingDirection === 'next' && (info.offset.x < -threshold || velocity < -500)) {
       // Complete next
-      await controls.start({ x: -width, transition: { duration: 0.3 } });
+      await controls.start({ x: -width, transition });
       onPageChange(currentPage + 1);
       x.set(0);
     } else if (flippingDirection === 'prev' && (info.offset.x > threshold || velocity > 500)) {
       // Complete prev
-      await controls.start({ x: width, transition: { duration: 0.3 } });
+      await controls.start({ x: width, transition });
       onPageChange(currentPage - 1);
       x.set(0);
     } else {
       // Revert
-      await controls.start({ x: 0, transition: { duration: 0.3 } });
+      await controls.start({ x: 0, transition });
     }
     setFlippingDirection(null);
   };
@@ -70,6 +73,10 @@ function PortraitFlipper({ currentPage, totalPages, onPageChange, renderPage }: 
   const rotateYNext = useTransform(x, [-width, 0], [-90, 0]);
   // When flipping prev (x > 0), the incoming previous page rotates from -90 to 0.
   const rotateYPrev = useTransform(x, [0, width], [0, -90]);
+
+  // Lighting shadows
+  const nextShadowOpacity = useTransform(x, [-width, 0], [0, 0.5]);
+  const prevShadowOpacity = useTransform(x, [0, width], [0.5, 0]);
 
   return (
     <div className="relative w-full h-full overflow-hidden" style={{ perspective: 1500 }}>
@@ -87,6 +94,7 @@ function PortraitFlipper({ currentPage, totalPages, onPageChange, renderPage }: 
            style={{ rotateY: rotateYNext, backfaceVisibility: 'hidden' }}
          >
            {renderPage(currentPage)}
+           <motion.div className="absolute inset-0 bg-black pointer-events-none" style={{ opacity: nextShadowOpacity }} />
          </motion.div>
       )}
 
@@ -97,6 +105,7 @@ function PortraitFlipper({ currentPage, totalPages, onPageChange, renderPage }: 
            style={{ rotateY: rotateYPrev, backfaceVisibility: 'hidden' }}
          >
            {renderPage(currentPage - 1)}
+           <motion.div className="absolute inset-0 bg-black pointer-events-none" style={{ opacity: prevShadowOpacity }} />
          </motion.div>
       )}
 
@@ -148,22 +157,31 @@ function LandscapeFlipper({ currentPage, totalPages, onPageChange, renderPage }:
     const threshold = halfWidth * 0.2;
     const velocity = info.velocity.x;
     
+    // Smooth spring configuration
+    const transition = { type: 'spring', stiffness: 180, damping: 22, mass: 0.8 };
+    
     if (flippingDirection === 'next' && (info.offset.x < -threshold || velocity < -500)) {
-      await controls.start({ x: -halfWidth, transition: { duration: 0.4 } });
+      await controls.start({ x: -halfWidth, transition });
       onPageChange(leftPageIndex + 2);
       x.set(0);
     } else if (flippingDirection === 'prev' && (info.offset.x > threshold || velocity > 500)) {
-      await controls.start({ x: halfWidth, transition: { duration: 0.4 } });
+      await controls.start({ x: halfWidth, transition });
       onPageChange(Math.max(0, leftPageIndex - 2));
       x.set(0);
     } else {
-      await controls.start({ x: 0, transition: { duration: 0.4 } });
+      await controls.start({ x: 0, transition });
     }
     setFlippingDirection(null);
   };
 
   const rotateYNext = useTransform(x, [-halfWidth, 0], [-180, 0]);
   const rotateYPrev = useTransform(x, [0, halfWidth], [0, 180]);
+  
+  // Realism enhancements: Shadows and gradients that change with rotation
+  const nextShadowOpacity = useTransform(x, [-halfWidth, 0], [0, 0.4]);
+  const prevShadowOpacity = useTransform(x, [0, halfWidth], [0.4, 0]);
+  const dropShadowX = useTransform(x, [-halfWidth, halfWidth], [-20, 20]);
+  const dropShadowOpacity = useTransform(x, [-halfWidth, 0, halfWidth], [0, 0.3, 0]);
 
   return (
     <div className="relative w-full h-full flex overflow-hidden" style={{ perspective: 2500 }}>
@@ -179,6 +197,20 @@ function LandscapeFlipper({ currentPage, totalPages, onPageChange, renderPage }:
 
       {/* The Central Flipping Container */}
       <div className="absolute inset-y-0 left-1/2 w-1/2 pointer-events-none z-10" style={{ transformStyle: 'preserve-3d' }}>
+         
+         {/* Dynamic Drop Shadow for the turning page */}
+         {(flippingDirection === 'next' || flippingDirection === 'prev') && (
+            <motion.div 
+               className="absolute inset-y-0 left-0 w-8 pointer-events-none bg-black"
+               style={{ 
+                 opacity: dropShadowOpacity,
+                 filter: 'blur(15px)',
+                 x: dropShadowX,
+                 transformOrigin: 'left'
+               }}
+            />
+         )}
+
          {/* Flipping NEXT (Right to Left) */}
          {flippingDirection === 'next' && (
            <motion.div
@@ -188,10 +220,13 @@ function LandscapeFlipper({ currentPage, totalPages, onPageChange, renderPage }:
              {/* Front of flipping page (The old Right Page) */}
              <div className="absolute inset-0" style={{ backfaceVisibility: 'hidden' }}>
                {renderPage(rightPageIndex)}
+               <motion.div className="absolute inset-0 bg-black pointer-events-none" style={{ opacity: nextShadowOpacity }} />
              </div>
              {/* Back of flipping page (The new Left Page) */}
              <div className="absolute inset-0" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
                {renderPage(leftPageIndex + 2)}
+               {/* Lighting on the back as it flips */}
+               <motion.div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/20 pointer-events-none" />
              </div>
            </motion.div>
          )}
@@ -205,10 +240,13 @@ function LandscapeFlipper({ currentPage, totalPages, onPageChange, renderPage }:
              {/* Front of flipping page (The old Left Page) */}
              <div className="absolute inset-0" style={{ backfaceVisibility: 'hidden' }}>
                {renderPage(leftPageIndex)}
+               <motion.div className="absolute inset-0 bg-black pointer-events-none" style={{ opacity: prevShadowOpacity }} />
              </div>
              {/* Back of flipping page (The new Right Page) */}
              <div className="absolute inset-0" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(-180deg)' }}>
                {renderPage(leftPageIndex - 1)}
+               {/* Lighting on the back as it flips */}
+               <motion.div className="absolute inset-0 bg-gradient-to-l from-transparent to-black/20 pointer-events-none" />
              </div>
            </motion.div>
          )}
