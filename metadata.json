@@ -1,0 +1,6 @@
+{
+  "name": "Books PWA",
+  "description": "A PWA for reading books and PDFs with realistic page-flipping animations, responsive for phones and tablets.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
