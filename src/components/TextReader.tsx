@@ -15,7 +15,7 @@ export function TextReader({ text, initialPage, onPageChange, theme, fontSize }:
   const containerRef = useRef<HTMLDivElement>(null);
   const { width, height } = useWindowSize();
   
-  const isLandscape = width >= 768;
+  const isLandscape = width > height && width >= 640;
   const columnWidth = isLandscape ? width / 2 : width;
 
   useEffect(() => {
@@ -91,8 +91,8 @@ export function TextReader({ text, initialPage, onPageChange, theme, fontSize }:
   };
 
   return (
-    <main className="w-full h-full flex items-center justify-center bg-[#0F0F0F] relative sm:px-12 sm:py-24">
-      <div className="flex w-full h-full max-w-6xl shadow-2xl relative overflow-hidden sm:rounded-lg">
+    <main className="w-full h-full flex items-center justify-center bg-[#0F0F0F] relative">
+      <div className="flex w-full h-full relative overflow-hidden">
         {/* Spine overlays (visible in landscape only) */}
         {isLandscape && (
           <>

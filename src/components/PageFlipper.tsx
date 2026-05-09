@@ -10,8 +10,8 @@ interface PageFlipperProps {
 }
 
 export function PageFlipper({ currentPage, totalPages, onPageChange, renderPage }: PageFlipperProps) {
-  const { width } = useWindowSize();
-  const isLandscape = width >= 768; // tablet and up
+  const { width, height } = useWindowSize();
+  const isLandscape = width > height && width >= 640; // tablet and up in landscape
 
   if (isLandscape) {
     return (

@@ -17,7 +17,7 @@ export function PDFReader({ fileData, initialPage, onPageChange, theme }: PDFRea
   const [numPages, setNumPages] = useState<number>(0);
   const { width, height } = useWindowSize();
   
-  const isLandscape = width >= 768;
+  const isLandscape = width > height && width >= 640;
   const pageWidth = isLandscape ? width / 2 : width;
 
   useEffect(() => {
