@@ -64,7 +64,7 @@ export function Library({ onOpenBook, theme = 'dark', onThemeChange }: LibraryPr
 
   return (
     <div className={cn(
-      "h-full overflow-y-auto p-6 pt-[calc(3rem+env(safe-area-inset-top))] pb-[calc(2rem+env(safe-area-inset-bottom))] sm:p-10 font-sans transition-colors duration-300 relative",
+      "flex-1 w-full overflow-y-auto p-6 pt-[calc(3rem+env(safe-area-inset-top))] pb-[calc(2rem+env(safe-area-inset-bottom))] sm:p-10 font-sans transition-colors duration-300 relative",
       theme === 'light' ? 'bg-[#F9F9F9] text-gray-900' : 'bg-[#0A0A0A] text-gray-200'
     )}>
       <header className={cn(

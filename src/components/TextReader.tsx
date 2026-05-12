@@ -22,13 +22,6 @@ export function TextReader({ text, initialPage, onPageChange, onProgress, theme,
   const pad = isLandscape ? 64 : 16; // horizontal padding
   const topPad = isLandscape ? 48 : 32; // vertical padding
   const innerColWidth = columnWidth - pad * 2;
-  // Calculate an exact height divisible by line-height (which is 1.8 * fontSize)
-  // This prevents random trailing voids at the bottom due to CSS multi-column leaving leftover pixels.
-  const lineHeightPx = fontSize * 1.8;
-  const maxAvailableHeight = height - (topPad * 2);
-  const linesCount = Math.floor(maxAvailableHeight / lineHeightPx);
-  const exactHeight = linesCount * lineHeightPx;
-  const verticalMargin = (height - exactHeight) / 2;
 
   useEffect(() => {
     // Measure total pages when layout or font size changes
@@ -54,7 +47,7 @@ export function TextReader({ text, initialPage, onPageChange, onProgress, theme,
     visibility: 'hidden',
     columnWidth: `${innerColWidth}px`,
     columnGap: `${pad * 2}px`,
-    height: `${exactHeight}px`,
+    height: `calc(100% - ${topPad * 2}px)`,
     fontSize: `${fontSize}px`,
     lineHeight: 1.8,
     fontFamily: 'serif',
@@ -77,8 +70,8 @@ export function TextReader({ text, initialPage, onPageChange, onProgress, theme,
          <div 
            className="absolute"
            style={{
-             top: verticalMargin,
-             height: `${exactHeight}px`,
+             top: topPad,
+             bottom: topPad,
              left: pad,
              width: innerColWidth,
              columnWidth: `${innerColWidth}px`,

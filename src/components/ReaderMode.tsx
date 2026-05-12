@@ -64,7 +64,7 @@ export function ReaderMode({ bookId, onClose }: { bookId: string, onClose: () =>
   };
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-[#0F0F0F] overflow-hidden select-none">
+    <div className="absolute inset-0 w-full h-full bg-[#0F0F0F] overflow-hidden select-none">
       <div 
         className="absolute inset-0 z-0"
         onClick={() => {
@@ -94,7 +94,7 @@ export function ReaderMode({ bookId, onClose }: { bookId: string, onClose: () =>
 
       {/* Top UI Bar */}
       <div 
-        className={`absolute top-0 inset-x-0 bg-[#121212] border-b border-white/5 shadow-sm flex items-center justify-between px-6 transition-transform duration-300 z-50 pt-[env(safe-area-inset-top)] pb-2 min-h-[4rem] ${showUI ? 'translate-y-0' : '-translate-y-full'}`}
+        className={`absolute top-0 inset-x-0 bg-[#121212] border-b border-white/5 shadow-sm flex items-center justify-between px-4 sm:px-6 transition-transform duration-300 z-50 pt-[calc(0.75rem+env(safe-area-inset-top))] pb-3 ${showUI ? 'translate-y-0' : '-translate-y-full'}`}
       >
         <button onClick={onClose} className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
           <ChevronLeft className="w-5 h-5" />
@@ -123,7 +123,7 @@ export function ReaderMode({ bookId, onClose }: { bookId: string, onClose: () =>
 
       {/* Settings Panel */}
       {showUI && showSettings && (
-        <div className="absolute top-[calc(4rem+env(safe-area-inset-top))] right-4 w-72 bg-[#121212] border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-xl p-5 z-50 animate-in fade-in slide-in-from-top-2 text-gray-200">
+        <div className="absolute top-[calc(3.5rem+env(safe-area-inset-top))] right-4 w-72 bg-[#121212] border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-xl p-5 z-50 animate-in fade-in slide-in-from-top-2 text-gray-200">
           <div className="mb-6">
             <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-3">Theme</p>
             <div className="flex gap-4">
