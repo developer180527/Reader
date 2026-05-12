@@ -94,7 +94,7 @@ export function ReaderMode({ bookId, onClose }: { bookId: string, onClose: () =>
 
       {/* Top UI Bar */}
       <div 
-        className={`absolute top-0 inset-x-0 bg-[#121212] border-b border-white/5 shadow-sm flex items-center justify-between px-4 sm:px-6 transition-transform duration-300 z-50 pt-[calc(0.75rem+env(safe-area-inset-top))] pb-3 ${showUI ? 'translate-y-0' : '-translate-y-full'}`}
+        className={`absolute top-0 inset-x-0 bg-[#121212] border-b border-white/5 shadow-sm flex items-center justify-between px-4 sm:px-6 transition-transform duration-300 z-50 pt-[calc(1rem+env(safe-area-inset-top))] pb-3 ${showUI ? 'translate-y-0' : '-translate-y-full'}`}
       >
         <button onClick={onClose} className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
           <ChevronLeft className="w-5 h-5" />
