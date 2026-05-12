@@ -18,9 +18,17 @@ export function TextReader({ text, initialPage, onPageChange, theme, fontSize }:
   const isLandscape = width > height && width >= 640;
   const columnWidth = isLandscape ? width / 2 : width;
 
-  const pad = isLandscape ? 64 : 24; // horizontal padding
-  const topPad = isLandscape ? 48 : 32; // vertical padding
+  const pad = isLandscape ? 64 : 16; // horizontal padding
+  const topPad = isLandscape ? 48 : 16; // vertical padding
   const innerColWidth = columnWidth - pad * 2;
+
+  // Calculate an exact height divisible by line-height (which is 1.8 * fontSize)
+  // This prevents random trailing voids at the bottom due to leftover pixels.
+  const lineHeightPx = fontSize * 1.8;
+  const maxAvailableHeight = height - (topPad * 2);
+  const linesCount = Math.floor(maxAvailableHeight / lineHeightPx);
+  const exactHeight = linesCount * lineHeightPx;
+  const verticalMargin = (height - exactHeight) / 2;
 
   useEffect(() => {
     // Measure total pages when layout or font size changes
@@ -39,7 +47,7 @@ export function TextReader({ text, initialPage, onPageChange, theme, fontSize }:
     visibility: 'hidden',
     columnWidth: `${innerColWidth}px`,
     columnGap: `${pad * 2}px`,
-    height: `${height - topPad * 2}px`,
+    height: `${exactHeight}px`,
     fontSize: `${fontSize}px`,
     lineHeight: 1.8,
     fontFamily: 'serif',
@@ -62,13 +70,12 @@ export function TextReader({ text, initialPage, onPageChange, theme, fontSize }:
          <div 
            className="absolute"
            style={{
-             top: topPad,
-             bottom: topPad,
+             top: verticalMargin,
+             height: `${exactHeight}px`,
              left: pad,
              width: innerColWidth,
              columnWidth: `${innerColWidth}px`,
              columnGap: `${pad*2}px`,
-             height: `calc(100% - ${topPad * 2}px)`,
              fontSize: `${fontSize}px`,
              lineHeight: 1.8,
              fontFamily: 'serif',
