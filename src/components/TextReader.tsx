@@ -18,30 +18,32 @@ export function TextReader({ text, initialPage, onPageChange, theme, fontSize }:
   const isLandscape = width > height && width >= 640;
   const columnWidth = isLandscape ? width / 2 : width;
 
+  const pad = isLandscape ? 64 : 24; // horizontal padding
+  const topPad = isLandscape ? 48 : 32; // vertical padding
+  const innerColWidth = columnWidth - pad * 2;
+
   useEffect(() => {
     // Measure total pages when layout or font size changes
     if (containerRef.current) {
-       // We force a layout calculation
        const el = containerRef.current;
-       // Total pages = total width / columnWidth
-       const pages = Math.ceil(el.scrollWidth / columnWidth);
+       const pages = Math.ceil(el.scrollWidth / innerColWidth);
        setTotalPages(Math.max(1, pages));
     }
-  }, [width, height, fontSize, text, columnWidth]);
+  }, [width, height, fontSize, text, innerColWidth]);
 
   // A hidden container to measure the flowed text
-  // We place it offscreen.
   const hiddenStyle: React.CSSProperties = {
     position: 'absolute',
     top: -9999,
     left: -9999,
     visibility: 'hidden',
-    columnWidth: `${columnWidth}px`,
-    columnGap: '0px',
-    height: `${height - 80}px`, // Leaving some margin for top/bottom
+    columnWidth: `${innerColWidth}px`,
+    columnGap: `${pad * 2}px`,
+    height: `${height - topPad * 2}px`,
     fontSize: `${fontSize}px`,
-    lineHeight: 1.6,
-    fontFamily: 'serif', // standard book font
+    lineHeight: 1.8,
+    fontFamily: 'serif',
+    textAlign: 'justify',
   };
 
   const getThemeClasses = () => {
@@ -53,25 +55,26 @@ export function TextReader({ text, initialPage, onPageChange, theme, fontSize }:
   };
 
   const renderTextPage = (index: number) => {
-    const pad = isLandscape ? 64 : 32; // padding per side
-    const innerColWidth = columnWidth - pad * 2;
     const themeClasses = getThemeClasses();
     
     return (
       <article className={`w-full h-full flex flex-col overflow-hidden relative ${themeClasses} ${isLandscape ? 'border-r' : ''}`}>
          <div 
-           className="absolute top-12 bottom-12"
+           className="absolute"
            style={{
+             top: topPad,
+             bottom: topPad,
              left: pad,
              width: innerColWidth,
              columnWidth: `${innerColWidth}px`,
              columnGap: `${pad*2}px`,
-             height: `calc(100% - 96px)`,
+             height: `calc(100% - ${topPad * 2}px)`,
              fontSize: `${fontSize}px`,
              lineHeight: 1.8,
              fontFamily: 'serif',
              textAlign: 'justify',
              // Shift left to reveal column `index`
+             // Since columnGap is pad*2, the distance between column centers is innerColWidth + pad*2
              transform: `translateX(-${index * (innerColWidth + pad*2)}px)`,
            }}
          >
@@ -81,7 +84,7 @@ export function TextReader({ text, initialPage, onPageChange, theme, fontSize }:
            ))}
          </div>
          
-         <footer className="absolute bottom-6 left-0 right-0 flex justify-center">
+         <footer className="absolute bottom-4 left-0 right-0 flex justify-center">
             <span className={`text-xs font-mono opacity-30 ${theme === 'dark' ? 'text-gray-400' : 'text-current'}`}>
               {index + 1}
             </span>

@@ -49,7 +49,7 @@ function PortraitFlipper({ currentPage, totalPages, onPageChange, renderPage }: 
     const velocity = info.velocity.x;
     
     // Smooth spring configuration
-    const transition = { type: 'spring', stiffness: 200, damping: 20, mass: 0.8 };
+    const transition = { type: 'spring' as const, stiffness: 200, damping: 20, mass: 0.8 };
     
     if (flippingDirection === 'next' && (info.offset.x < -threshold || velocity < -500)) {
       // Complete next
@@ -158,7 +158,7 @@ function LandscapeFlipper({ currentPage, totalPages, onPageChange, renderPage }:
     const velocity = info.velocity.x;
     
     // Smooth spring configuration
-    const transition = { type: 'spring', stiffness: 180, damping: 22, mass: 0.8 };
+    const transition = { type: 'spring' as const, stiffness: 180, damping: 22, mass: 0.8 };
     
     if (flippingDirection === 'next' && (info.offset.x < -threshold || velocity < -500)) {
       await controls.start({ x: -halfWidth, transition });

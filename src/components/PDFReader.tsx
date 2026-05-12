@@ -50,8 +50,8 @@ export function PDFReader({ fileData, initialPage, onPageChange, theme }: PDFRea
       <div className={`w-full h-full flex items-center justify-center overflow-hidden pointer-events-none select-none ${theme === 'dark' ? 'invert hue-rotate-180' : ''} ${theme === 'sepia' ? 'sepia-[.4]' : ''}`}>
         <Page 
           pageNumber={pageNumber} 
-          width={useWidth ? pageWidth - 32 : undefined}
-          height={!useWidth ? height - 64 : undefined}
+          width={useWidth ? pageWidth : undefined}
+          height={!useWidth ? height : undefined}
           className="shadow-2xl bg-white"
           renderTextLayer={false}
           renderAnnotationLayer={false}
