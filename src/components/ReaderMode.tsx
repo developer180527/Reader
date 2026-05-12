@@ -31,8 +31,8 @@ export function ReaderMode({ bookId, onClose }: { bookId: string, onClose: () =>
   useEffect(() => {
     libraryDB.getBook(bookId).then(b => {
       setBook(b);
-      // Assuming progress is stored as page index
-      if (b && b.progress && b.progress > 0 && b.progress > 1) { // Wait, I defined progress as 0-1 earlier. Let's just track currentPage in local storage or update the DB
+      if (b && b.currentPage !== undefined) {
+        setCurrentPage(b.currentPage);
       }
     });
     libraryDB.getBookFile(bookId).then(setFile);
@@ -40,8 +40,12 @@ export function ReaderMode({ bookId, onClose }: { bookId: string, onClose: () =>
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    // Ideally we'd save progress async here
-    // libraryDB.updateBook(bookId, { progress: page / totalPages }); // if we had totalPages readily available
+    // Debounce or just fire and forget the update
+    libraryDB.updateBook(bookId, { currentPage: page });
+  };
+
+  const handleProgress = (progress: number) => {
+    libraryDB.updateBook(bookId, { progress });
   };
 
   if (!book || !file) {
@@ -60,7 +64,7 @@ export function ReaderMode({ bookId, onClose }: { bookId: string, onClose: () =>
   };
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-[#0F0F0F] overflow-hidden select-none">
+    <div className="fixed inset-0 w-[100dvw] h-[100dvh] bg-[#0F0F0F] overflow-hidden select-none">
       <div 
         className="absolute inset-0 z-0"
         onClick={() => {
@@ -73,6 +77,7 @@ export function ReaderMode({ bookId, onClose }: { bookId: string, onClose: () =>
             fileData={file.data as ArrayBuffer}
             initialPage={currentPage}
             onPageChange={handlePageChange}
+            onProgress={handleProgress}
             theme={settings.theme}
           />
         ) : (
@@ -80,6 +85,7 @@ export function ReaderMode({ bookId, onClose }: { bookId: string, onClose: () =>
             text={file.data as string}
             initialPage={currentPage}
             onPageChange={handlePageChange}
+            onProgress={handleProgress}
             theme={settings.theme}
             fontSize={settings.fontSize}
           />
@@ -88,7 +94,7 @@ export function ReaderMode({ bookId, onClose }: { bookId: string, onClose: () =>
 
       {/* Top UI Bar */}
       <div 
-        className={`absolute top-0 inset-x-0 h-16 bg-[#121212] border-b border-white/5 shadow-sm flex items-center justify-between px-6 transition-transform duration-300 z-50 ${showUI ? 'translate-y-0' : '-translate-y-full'}`}
+        className={`absolute top-0 inset-x-0 bg-[#121212] border-b border-white/5 shadow-sm flex items-center justify-between px-6 transition-transform duration-300 z-50 pt-[env(safe-area-inset-top)] pb-2 min-h-[4rem] ${showUI ? 'translate-y-0' : '-translate-y-full'}`}
       >
         <button onClick={onClose} className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
           <ChevronLeft className="w-5 h-5" />
@@ -117,7 +123,7 @@ export function ReaderMode({ bookId, onClose }: { bookId: string, onClose: () =>
 
       {/* Settings Panel */}
       {showUI && showSettings && (
-        <div className="absolute top-16 right-4 w-72 bg-[#121212] border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-xl p-5 z-50 animate-in fade-in slide-in-from-top-2 text-gray-200">
+        <div className="absolute top-[calc(4rem+env(safe-area-inset-top))] right-4 w-72 bg-[#121212] border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-xl p-5 z-50 animate-in fade-in slide-in-from-top-2 text-gray-200">
           <div className="mb-6">
             <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-3">Theme</p>
             <div className="flex gap-4">

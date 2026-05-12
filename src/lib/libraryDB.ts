@@ -48,6 +48,7 @@ export const libraryDB = {
       dateAdded: Date.now(),
       bookmarks: [],
       progress: 0,
+      currentPage: 0,
     };
 
     const newFile: BookFile = {

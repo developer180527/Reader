@@ -6,11 +6,12 @@ interface TextReaderProps {
   text: string;
   initialPage: number;
   onPageChange: (page: number) => void;
+  onProgress?: (progress: number) => void;
   theme: 'light' | 'sepia' | 'dark';
   fontSize: number;
 }
 
-export function TextReader({ text, initialPage, onPageChange, theme, fontSize }: TextReaderProps) {
+export function TextReader({ text, initialPage, onPageChange, onProgress, theme, fontSize }: TextReaderProps) {
   const [totalPages, setTotalPages] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const { width, height } = useWindowSize();
@@ -19,16 +20,8 @@ export function TextReader({ text, initialPage, onPageChange, theme, fontSize }:
   const columnWidth = isLandscape ? width / 2 : width;
 
   const pad = isLandscape ? 64 : 16; // horizontal padding
-  const topPad = isLandscape ? 48 : 16; // vertical padding
+  const topPad = isLandscape ? 48 : 32; // vertical padding
   const innerColWidth = columnWidth - pad * 2;
-
-  // Calculate an exact height divisible by line-height (which is 1.8 * fontSize)
-  // This prevents random trailing voids at the bottom due to leftover pixels.
-  const lineHeightPx = fontSize * 1.8;
-  const maxAvailableHeight = height - (topPad * 2);
-  const linesCount = Math.floor(maxAvailableHeight / lineHeightPx);
-  const exactHeight = linesCount * lineHeightPx;
-  const verticalMargin = (height - exactHeight) / 2;
 
   useEffect(() => {
     // Measure total pages when layout or font size changes
@@ -39,6 +32,13 @@ export function TextReader({ text, initialPage, onPageChange, theme, fontSize }:
     }
   }, [width, height, fontSize, text, innerColWidth]);
 
+  useEffect(() => {
+    if (totalPages > 0 && onProgress) {
+      const progress = totalPages > 1 ? initialPage / (totalPages - 1) : 1;
+      onProgress(progress);
+    }
+  }, [initialPage, totalPages, onProgress]);
+
   // A hidden container to measure the flowed text
   const hiddenStyle: React.CSSProperties = {
     position: 'absolute',
@@ -47,7 +47,7 @@ export function TextReader({ text, initialPage, onPageChange, theme, fontSize }:
     visibility: 'hidden',
     columnWidth: `${innerColWidth}px`,
     columnGap: `${pad * 2}px`,
-    height: `${exactHeight}px`,
+    height: `${height - topPad * 2}px`,
     fontSize: `${fontSize}px`,
     lineHeight: 1.8,
     fontFamily: 'serif',
@@ -70,8 +70,8 @@ export function TextReader({ text, initialPage, onPageChange, theme, fontSize }:
          <div 
            className="absolute"
            style={{
-             top: verticalMargin,
-             height: `${exactHeight}px`,
+             top: topPad,
+             bottom: topPad,
              left: pad,
              width: innerColWidth,
              columnWidth: `${innerColWidth}px`,
@@ -91,7 +91,7 @@ export function TextReader({ text, initialPage, onPageChange, theme, fontSize }:
            ))}
          </div>
          
-         <footer className="absolute bottom-4 left-0 right-0 flex justify-center">
+         <footer className="absolute bottom-4 left-0 right-0 flex justify-center pb-[env(safe-area-inset-bottom)]">
             <span className={`text-xs font-mono opacity-30 ${theme === 'dark' ? 'text-gray-400' : 'text-current'}`}>
               {index + 1}
             </span>

@@ -49,7 +49,7 @@ function PortraitFlipper({ currentPage, totalPages, onPageChange, renderPage }: 
     const velocity = info.velocity.x;
     
     // Fluid, organic curve for a page turn
-    const transition = { type: 'tween', ease: [0.32, 0.72, 0, 1], duration: 0.5 };
+    const transition = { type: 'tween' as const, ease: [0.32, 0.72, 0, 1] as any, duration: 0.5 };
     
     if (flippingDirection === 'next' && (info.offset.x < -threshold || velocity < -400)) {
       // Complete next
@@ -63,7 +63,7 @@ function PortraitFlipper({ currentPage, totalPages, onPageChange, renderPage }: 
       x.set(0);
     } else {
       // Revert
-      await controls.start({ x: 0, transition: { type: 'tween', ease: 'easeInOut', duration: 0.3 } });
+      await controls.start({ x: 0, transition: { type: 'tween' as const, ease: 'easeInOut', duration: 0.3 } });
     }
     setFlippingDirection(null);
   };
@@ -178,7 +178,7 @@ function LandscapeFlipper({ currentPage, totalPages, onPageChange, renderPage }:
     const velocity = info.velocity.x;
     
     // Fluid, organic curve for a page turn
-    const transition = { type: 'tween', ease: [0.32, 0.72, 0, 1], duration: 0.6 };
+    const transition = { type: 'tween' as const, ease: [0.32, 0.72, 0, 1] as any, duration: 0.6 };
     
     if (flippingDirection === 'next' && (info.offset.x < -threshold || velocity < -500)) {
       await controls.start({ x: -halfWidth, transition });
@@ -189,7 +189,7 @@ function LandscapeFlipper({ currentPage, totalPages, onPageChange, renderPage }:
       onPageChange(Math.max(0, leftPageIndex - 2));
       x.set(0);
     } else {
-      await controls.start({ x: 0, transition: { type: 'tween', ease: 'easeInOut', duration: 0.4 } });
+      await controls.start({ x: 0, transition: { type: 'tween' as const, ease: 'easeInOut', duration: 0.4 } });
     }
     setFlippingDirection(null);
   };

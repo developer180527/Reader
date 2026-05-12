@@ -8,6 +8,7 @@ export interface Book {
   dateAdded: number;
   coverImage?: string; // Data URL for a generated or extracted cover
   progress?: number; // 0 to 1
+  currentPage?: number; // the actual page number the user was on
   bookmarks: number[]; // Array of page numbers or percentages
 }
 

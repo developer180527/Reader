@@ -10,10 +10,11 @@ interface PDFReaderProps {
   fileData: ArrayBuffer;
   initialPage: number;
   onPageChange: (page: number) => void;
+  onProgress?: (progress: number) => void;
   theme: 'light' | 'sepia' | 'dark';
 }
 
-export function PDFReader({ fileData, initialPage, onPageChange, theme }: PDFReaderProps) {
+export function PDFReader({ fileData, initialPage, onPageChange, onProgress, theme }: PDFReaderProps) {
   const [numPages, setNumPages] = useState<number>(0);
   const { width, height } = useWindowSize();
   
@@ -34,6 +35,16 @@ export function PDFReader({ fileData, initialPage, onPageChange, theme }: PDFRea
       onPageChange(Math.max(0, initialPage - 1));
     }
   }, [isLandscape, initialPage, onPageChange]);
+
+  useEffect(() => {
+    if (numPages > 0 && onProgress) {
+      // initialPage is 0-indexed, so we can use (initialPage + 1) / numPages.
+      // Actually, let's keep it simple: initialPage / (numPages - 1) or similar.
+      // But page numbers go from 1 to numPages, so initialPage is 0 to numPages - 1.
+      const progress = numPages > 1 ? initialPage / (numPages - 1) : 1;
+      onProgress(progress);
+    }
+  }, [initialPage, numPages, onProgress]);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
