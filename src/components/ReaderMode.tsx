@@ -64,7 +64,7 @@ export function ReaderMode({ bookId, onClose }: { bookId: string, onClose: () =>
   };
 
   return (
-    <div className="fixed inset-0 w-[100dvw] h-[100dvh] bg-[#0F0F0F] overflow-hidden select-none">
+    <div className="fixed inset-0 w-full h-full bg-[#0F0F0F] overflow-hidden select-none">
       <div 
         className="absolute inset-0 z-0"
         onClick={() => {

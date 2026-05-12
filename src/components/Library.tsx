@@ -57,11 +57,11 @@ export function Library({ onOpenBook }: { onOpenBook: (id: string) => void }) {
 
   return (
     <div className="h-full overflow-y-auto bg-[#0A0A0A] text-gray-200 p-6 pt-[calc(3rem+env(safe-area-inset-top))] pb-[calc(2rem+env(safe-area-inset-bottom))] sm:p-10 font-sans">
-      <header className="max-w-5xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10 py-4 bg-[#121212] border border-white/5 px-6 sm:px-8 rounded-2xl shadow-xl">
-        <h1 className="text-sm font-semibold tracking-widest uppercase opacity-60 text-center md:text-left mt-2 md:mt-0">Library</h1>
+      <header className="max-w-5xl mx-auto flex flex-row items-center justify-between gap-4 mb-10 py-4 bg-[#121212] border border-white/5 px-4 sm:px-8 rounded-2xl shadow-xl">
+        <h1 className="text-sm font-semibold tracking-widest uppercase opacity-60 shrink-0">Library</h1>
         
-        <div className="flex items-center gap-4 sm:gap-6 w-full md:w-auto">
-          <div className="relative flex-1 min-w-[150px] sm:min-w-[200px]">
+        <div className="flex flex-1 md:flex-none items-center justify-end gap-3 sm:gap-6">
+          <div className="relative flex-1 max-w-sm min-w-[120px] sm:min-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 opacity-40" />
             <input 
               type="text" 
